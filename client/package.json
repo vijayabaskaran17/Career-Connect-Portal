@@ -2,6 +2,7 @@
   "name": "career-connect-client",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://vijayabaskaran17.github.io/Career-Connect-Portal",
   "dependencies": {
     "axios": "^1.7.2",
     "react": "^18.3.1",
@@ -9,11 +10,16 @@
     "react-router-dom": "^6.24.1",
     "react-scripts": "5.0.1"
   },
+  "devDependencies": {
+    "gh-pages": "^6.1.1"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": { "extends": ["react-app"] },
   "browserslist": {
