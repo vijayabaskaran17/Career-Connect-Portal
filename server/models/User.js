@@ -122,9 +122,16 @@ const userSchema = new mongoose.Schema(
     },
 
     savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Job' }],
+
+    // Temporary User & TTL Deletion Properties
+    isTemporary: { type: Boolean, default: false },
+    expiresAt: { type: Date, default: null },
   },
   { timestamps: true }
 );
+
+// MongoDB TTL Index: automatically purges/deletes user document when current time reaches expiresAt
+userSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model('User', userSchema);
 

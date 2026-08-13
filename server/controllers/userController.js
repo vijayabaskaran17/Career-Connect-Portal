@@ -327,6 +327,40 @@ const markNotificationsRead = async (req, res, next) => {
   }
 };
 
+// @route PUT /api/users/:id/make-permanent (admin or self makes temporary account permanent)
+const makeUserPermanent = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    user.isTemporary = false;
+    user.expiresAt = null;
+    await user.save();
+
+    res.json({ message: 'User account converted to Permanent in DB', user });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// @route PUT /api/users/:id/set-expiry (admin or self sets temporary TTL expiration)
+const setUserExpiry = async (req, res, next) => {
+  try {
+    const { hours } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const expiryHours = Number(hours) || 24;
+    user.isTemporary = true;
+    user.expiresAt = new Date(Date.now() + expiryHours * 60 * 60 * 1000);
+    await user.save();
+
+    res.json({ message: `User account set to expire & auto-delete in ${expiryHours} hours`, user });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   updateProfile,
   getCandidates,
@@ -339,5 +373,7 @@ module.exports = {
   completeSkillWorkout,
   getNotifications,
   markNotificationsRead,
+  makeUserPermanent,
+  setUserExpiry,
 };
 

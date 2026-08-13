@@ -102,6 +102,26 @@ const UserManagement = ({ initialTab = 'users' }) => {
     }
   };
 
+  const handleMakePermanent = async (userId) => {
+    try {
+      await api.put(`/users/${userId}/make-permanent`);
+      setUsers(users.map((u) => (u._id === userId ? { ...u, isTemporary: false, expiresAt: null } : u)));
+      alert('✅ User account converted to Permanent record in DB.');
+    } catch (err) {
+      console.log('Error converting to permanent user:', err);
+    }
+  };
+
+  const handleSetUserExpiry = async (userId, hours = 24) => {
+    try {
+      const { data } = await api.put(`/users/${userId}/set-expiry`, { hours });
+      setUsers(users.map((u) => (u._id === userId ? { ...u, isTemporary: true, expiresAt: data.user.expiresAt } : u)));
+      alert(`⏱️ User account set to expire & auto-delete from DB in ${hours} hours.`);
+    } catch (err) {
+      console.log('Error setting user expiry:', err);
+    }
+  };
+
   const handleUpdateFeedbackStatus = async (feedbackId, newStatus) => {
     try {
       const { data } = await api.put(`/feedback/${feedbackId}/status`, { status: newStatus });
@@ -346,12 +366,23 @@ const UserManagement = ({ initialTab = 'users' }) => {
                       </td>
                       <td>{u.currentLocation || 'Remote'}</td>
                       <td>
-                        <span className={`badge ${u.isActive !== false ? 'badge-success' : 'badge-danger'}`}>
-                          {u.isActive !== false ? 'Active' : 'Inactive'}
-                        </span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                          <span className={`badge ${u.isActive !== false ? 'badge-success' : 'badge-danger'}`}>
+                            {u.isActive !== false ? 'Active' : 'Inactive'}
+                          </span>
+                          {u.isTemporary || u.expiresAt ? (
+                            <span className="badge badge-warning" style={{ fontSize: '0.74rem' }} title={`MongoDB TTL Expiry: ${new Date(u.expiresAt).toLocaleString()}`}>
+                              ⏱️ Temp (Auto-Deletes: {new Date(u.expiresAt).toLocaleTimeString()})
+                            </span>
+                          ) : (
+                            <span className="badge badge-subtle" style={{ fontSize: '0.74rem' }}>
+                              Permanent DB Record
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td>
-                        <div className="action-btn-group">
+                        <div className="action-btn-group" style={{ flexWrap: 'wrap' }}>
                           <button className="btn-text-sm" onClick={() => setSelectedUserModal(u)}>
                             Details
                           </button>
@@ -359,6 +390,25 @@ const UserManagement = ({ initialTab = 'users' }) => {
                             <button className="btn-success-sm" onClick={() => handleApproveRecruiter(u._id)}>
                               Approve
                             </button>
+                          )}
+                          {u.role !== 'admin' && (
+                            u.isTemporary ? (
+                              <button
+                                className="btn-success-sm"
+                                onClick={() => handleMakePermanent(u._id)}
+                                title="Convert to Permanent DB Record"
+                              >
+                                Make Permanent
+                              </button>
+                            ) : (
+                              <button
+                                className="btn-warning-sm"
+                                onClick={() => handleSetUserExpiry(u._id, 24)}
+                                title="Set 24h Auto-Delete Expiration in MongoDB"
+                              >
+                                Set 24h Temp
+                              </button>
+                            )
                           )}
                           {u.role !== 'admin' && (
                             <button

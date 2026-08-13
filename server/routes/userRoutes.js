@@ -11,6 +11,8 @@ const {
   completeSkillWorkout,
   getNotifications,
   markNotificationsRead,
+  makeUserPermanent,
+  setUserExpiry,
 } = require('../controllers/userController');
 const { protect, authorize } = require('../middleware/auth');
 
@@ -27,6 +29,8 @@ router.post('/daily-mission/complete', protect, completeDailyMission);
 router.post('/skill-workout/complete', protect, completeSkillWorkout);
 router.get('/notifications', protect, getNotifications);
 router.put('/notifications/read', protect, markNotificationsRead);
+router.put('/:id/make-permanent', protect, authorize('admin'), makeUserPermanent);
+router.put('/:id/set-expiry', protect, authorize('admin'), setUserExpiry);
 
 module.exports = router;
 

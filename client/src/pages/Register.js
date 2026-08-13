@@ -267,6 +267,41 @@ const Register = () => {
             </div>
           )}
 
+          {/* Temporary Account Expiration Settings */}
+          <div className="form-group" style={{ background: 'rgba(255,255,255,0.03)', padding: '14px', borderRadius: '10px', border: '1px solid var(--border-color)', marginTop: '14px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', marginBottom: '6px' }}>
+              <input
+                type="checkbox"
+                name="isTemporary"
+                checked={form.isTemporary || false}
+                onChange={(e) => setForm({ ...form, isTemporary: e.target.checked })}
+                style={{ width: '18px', height: '18px', accentColor: 'var(--primary)' }}
+              />
+              <strong>⏱️ Temporary Registration (Auto-Delete from DB)</strong>
+            </label>
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: form.isTemporary ? '10px' : '0' }}>
+              When enabled, MongoDB will store this account temporarily and automatically delete/purge it from the database after expiration.
+            </p>
+
+            {form.isTemporary && (
+              <div style={{ marginTop: '8px' }}>
+                <label style={{ fontSize: '0.85rem' }}>Auto-Delete Expiration Duration:</label>
+                <select
+                  name="tempDurationHours"
+                  value={form.tempDurationHours || '24'}
+                  onChange={handleChange}
+                  style={{ marginTop: '4px' }}
+                >
+                  <option value="1">⚡ 1 Hour (Testing & Quick Evaluation)</option>
+                  <option value="12">⏳ 12 Hours</option>
+                  <option value="24">📅 24 Hours (1 Day - Default)</option>
+                  <option value="72">📅 72 Hours (3 Days)</option>
+                  <option value="168">📅 168 Hours (7 Days)</option>
+                </select>
+              </div>
+            )}
+          </div>
+
           <button type="submit" className="btn-primary" disabled={loading} style={{ marginTop: '16px' }}>
             {loading ? 'Creating Account...' : 'Register Now →'}
           </button>

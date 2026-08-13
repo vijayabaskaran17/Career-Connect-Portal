@@ -8,12 +8,19 @@ const generateToken = (id) =>
 // @route POST /api/auth/register
 const register = async (req, res, next) => {
   try {
-    const { name, email, password, role, company, skills } = req.body;
+    const { name, email, password, role, company, skills, isTemporary, tempDurationHours } = req.body;
 
     const existing = await User.findOne({ email });
     if (existing) return res.status(400).json({ message: 'Email already registered' });
 
     const hashed = await bcrypt.hash(password, 10);
+
+    // Calculate TTL expiry date if account is temporary
+    let expiresAt = null;
+    if (isTemporary) {
+      const hours = Number(tempDurationHours) || 24;
+      expiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
+    }
 
     const user = await User.create({
       name,
@@ -22,6 +29,8 @@ const register = async (req, res, next) => {
       role: role || 'student',
       company: role === 'recruiter' ? company : undefined,
       skills: skills || [],
+      isTemporary: Boolean(isTemporary),
+      expiresAt,
     });
 
     const userObj = user.toObject();
