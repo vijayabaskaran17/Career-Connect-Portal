@@ -32,28 +32,28 @@ const Candidates = () => {
   const [actionStatus, setActionStatus] = useState('');
 
   useEffect(() => {
+    const fetchCandidates = async () => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams();
+        if (filters.careerStage !== 'All') params.append('careerStage', filters.careerStage);
+        if (filters.skill) params.append('skill', filters.skill);
+        if (filters.experience) params.append('experience', filters.experience);
+        if (filters.location) params.append('location', filters.location);
+        if (filters.workPreference !== 'All') params.append('workPreference', filters.workPreference);
+        if (filters.search) params.append('search', filters.search);
+
+        const { data } = await api.get(`/users/candidates?${params.toString()}`);
+        setCandidates(data || []);
+      } catch (err) {
+        console.log('Error fetching candidates:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchCandidates();
   }, [filters]);
-
-  const fetchCandidates = async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (filters.careerStage !== 'All') params.append('careerStage', filters.careerStage);
-      if (filters.skill) params.append('skill', filters.skill);
-      if (filters.experience) params.append('experience', filters.experience);
-      if (filters.location) params.append('location', filters.location);
-      if (filters.workPreference !== 'All') params.append('workPreference', filters.workPreference);
-      if (filters.search) params.append('search', filters.search);
-
-      const { data } = await api.get(`/users/candidates?${params.toString()}`);
-      setCandidates(data || []);
-    } catch (err) {
-      console.log('Error fetching candidates:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleFilterChange = (e) => {
     setFilters({ ...filters, [e.target.name]: e.target.value });

@@ -158,7 +158,6 @@ const Contact = () => {
 
   const totalCount = feedbacks.length;
   const newCount = feedbacks.filter((f) => f.status === 'New').length;
-  const resolvedCount = feedbacks.filter((f) => f.status === 'Resolved').length;
   const studentFeedbackCount = feedbacks.filter((f) => f.role === 'student').length;
   const recruiterFeedbackCount = feedbacks.filter((f) => f.role === 'recruiter').length;
   const avgRating = totalCount > 0

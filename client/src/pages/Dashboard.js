@@ -220,6 +220,10 @@ const CareerDashboard = () => {
               <strong style={{ color: 'var(--primary-light)' }}>{user?.targetJobTitle || 'Software Engineer'}</strong>
             </div>
             <div className="status-info-item">
+              <span className="status-label">Active Applications:</span>
+              <strong className="badge badge-blue">{applications.length} Submitted</strong>
+            </div>
+            <div className="status-info-item">
               <span className="status-label">Career Goal:</span>
               <p className="text-muted">{user?.careerGoals || 'Build tech expertise & join top innovation team.'}</p>
             </div>
