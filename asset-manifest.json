@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/Career-Connect-Portal/static/css/main.394ff896.css",
+    "main.js": "/Career-Connect-Portal/static/js/main.4f000f57.js",
+    "index.html": "/Career-Connect-Portal/index.html",
+    "main.394ff896.css.map": "/Career-Connect-Portal/static/css/main.394ff896.css.map",
+    "main.4f000f57.js.map": "/Career-Connect-Portal/static/js/main.4f000f57.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.394ff896.css",
+    "static/js/main.4f000f57.js"
+  ]
+}
